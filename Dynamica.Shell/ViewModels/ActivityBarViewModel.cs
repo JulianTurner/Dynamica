@@ -7,7 +7,7 @@ namespace Dynamica.Shell.ViewModels;
 
 public sealed class ActivityBarViewModel : ReactiveObject
 {
-    public ObservableCollection<ActivityItem> Items { get; } = new();
+    public ObservableCollection<ActivityBarItem> Items { get; } = new();
 
     private string? _selectedId;
     public string? SelectedId
@@ -28,9 +28,9 @@ public sealed class ActivityBarViewModel : ReactiveObject
     public ActivityBarViewModel()
     {
         // Beispielitems
-        Items.Add(new ActivityItem("tags",      "🏷", "Tags"));
-        Items.Add(new ActivityItem("search",    "🔍", "Suche"));
-        Items.Add(new ActivityItem("settings",  "⚙",  "Einstellungen"));
+        Items.Add(new ActivityBarItem("tags",      "🏷", "Tags"));
+        Items.Add(new ActivityBarItem("search",    "🔍", "Suche"));
+        Items.Add(new ActivityBarItem("settings",  "⚙",  "Einstellungen"));
 
         // Standard: Icons-only
         IsExpanded = false;
