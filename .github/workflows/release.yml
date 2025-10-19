@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+    
+    - name: Generate version
+      id: version
+      run: |
+        # Get the current date and time for version (includes time to ensure uniqueness)
+        VERSION="v$(date +'%Y.%m.%d-%H%M')-$(git rev-parse --short HEAD)"
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Generated version: $VERSION"
+    
+    - name: Publish Linux x64
+      run: |
+        dotnet publish Dynamica.Shell/Dynamica.Shell.csproj \
+          --configuration Release \
+          --runtime linux-x64 \
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -p:IncludeNativeLibrariesForSelfExtract=true \
+          --output ./publish/linux-x64
+    
+    - name: Publish Windows x64
+      run: |
+        dotnet publish Dynamica.Shell/Dynamica.Shell.csproj \
+          --configuration Release \
+          --runtime win-x64 \
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -p:IncludeNativeLibrariesForSelfExtract=true \
+          --output ./publish/win-x64
+    
+    - name: Create Linux archive
+      run: |
+        cd ./publish/linux-x64
+        tar -czf ../../Dynamica-linux-x64.tar.gz *
+        cd ../..
+    
+    - name: Create Windows archive
+      run: |
+        cd ./publish/win-x64
+        zip -r ../../Dynamica-win-x64.zip *
+        cd ../..
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        name: Release ${{ steps.version.outputs.VERSION }}
+        body: |
+          Automated release from main branch
+          
+          ## Downloads
+          - **Linux (x64)**: Dynamica-linux-x64.tar.gz
+          - **Windows (x64)**: Dynamica-win-x64.zip
+          
+          ## Installation
+          ### Linux
+          ```bash
+          tar -xzf Dynamica-linux-x64.tar.gz
+          chmod +x Dynamica.Shell
+          ./Dynamica.Shell
+          ```
+          
+          ### Windows
+          Extract the zip file and run `Dynamica.Shell.exe`
+        files: |
+          Dynamica-linux-x64.tar.gz
+          Dynamica-win-x64.zip
+        draft: false
+        prerelease: false
