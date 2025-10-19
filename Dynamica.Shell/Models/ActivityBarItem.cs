@@ -17,6 +17,8 @@ public sealed class ActivityBarItem : ReactiveObject
 
     public ActivityBarItem(string id, string icon, string label)
     {
-        Id = id; Icon = icon; Label = label;
+        Id = id;
+        Icon = icon;
+        Label = label;
     }
 }
