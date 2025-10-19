@@ -1,10 +1,8 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 
 namespace Dynamica.Shell.Views;
 
-public partial class ActivityBarView : UserControl
+public partial class ActivityBarView :  ReactiveUserControl<ViewModels.ActivityBarViewModel>
 {
     public ActivityBarView()
     {

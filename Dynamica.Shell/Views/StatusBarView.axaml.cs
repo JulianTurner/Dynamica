@@ -1,13 +1,14 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 
 namespace Dynamica.Shell.Views;
 
-public partial class StatusBarView : UserControl
+public partial class StatusBarView
+    : ReactiveUserControl<ViewModels.StatusBarViewModel>
 {
     public StatusBarView()
     {
         InitializeComponent();
+
     }
+
 }
