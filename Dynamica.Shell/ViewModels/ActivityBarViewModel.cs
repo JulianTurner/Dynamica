@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using Dynamica.Shell.Models;
 using ReactiveUI;
 
@@ -7,7 +8,7 @@ namespace Dynamica.Shell.ViewModels;
 
 public sealed class ActivityBarViewModel : ReactiveObject
 {
-    public ObservableCollection<ActivityItem> Items { get; } = new();
+    public ObservableCollection<ActivityBarItem> Items { get; } = new();
 
     private string? _selectedId;
     public string? SelectedId
@@ -28,14 +29,14 @@ public sealed class ActivityBarViewModel : ReactiveObject
     public ActivityBarViewModel()
     {
         // Beispielitems
-        Items.Add(new ActivityItem("tags",      "🏷", "Tags"));
-        Items.Add(new ActivityItem("search",    "🔍", "Suche"));
-        Items.Add(new ActivityItem("settings",  "⚙",  "Einstellungen"));
+        Items.Add(new ActivityBarItem("tags",      "🏷", "Tags"));
+        Items.Add(new ActivityBarItem("search",    "🔍", "Suche"));
+        Items.Add(new ActivityBarItem("settings",  "⚙",  "Einstellungen"));
 
         // Standard: Icons-only
         IsExpanded = false;
 
-        ItemClick = ReactiveCommand.Create<string>(OnItemClick);
+        ItemClick = ReactiveCommand.Create<string>(OnItemClick, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     private void OnItemClick(string id)
