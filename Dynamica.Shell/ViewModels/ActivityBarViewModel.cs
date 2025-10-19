@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using Dynamica.Shell.Models;
 using ReactiveUI;
 
@@ -35,7 +36,7 @@ public sealed class ActivityBarViewModel : ReactiveObject
         // Standard: Icons-only
         IsExpanded = false;
 
-        ItemClick = ReactiveCommand.Create<string>(OnItemClick);
+        ItemClick = ReactiveCommand.Create<string>(OnItemClick, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     private void OnItemClick(string id)
